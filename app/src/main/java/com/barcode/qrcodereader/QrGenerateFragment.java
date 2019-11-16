@@ -71,7 +71,6 @@ public class QrGenerateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         try{
-            //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             setHasOptionsMenu(true);
             getActivity().setTitle("QR Generator");
 
