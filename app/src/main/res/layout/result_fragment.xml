@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:paddingTop="10dp"
+        android:background="@color/colorWhite"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/headerImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/headerContent"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            android:layout_marginLeft="10dp"
+            android:text="Sample Text"
+            android:layout_toRightOf="@id/headerImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/headerDetail"
+            android:text="May 07,2019"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/headerImg"
+            android:layout_below="@+id/headerContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/bodyLayout"
+        android:background="@color/colorOffWhite"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/scanResult"
+            android:textSize="20dp"
+            android:text="Scan Result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/footerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite">
+
+        <GridView
+            android:id="@+id/iconGridView"
+            android:numColumns="6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></GridView>
+
+    </RelativeLayout>
+
+</LinearLayout>

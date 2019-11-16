@@ -1,0 +1,79 @@
+<resources>
+    <string name="app_name">QR Scanner</string>
+    <string name="title_activity_drawer">Scan</string>
+    <string name="open">Open navigation drawer</string>
+    <string name="close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header Image</string>
+    <string name="action_settings">Settings</string>
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="title_activity_main">Barcode Reader Sample</string>
+    <string name="barcode_header">Click &quot;Read Barcode&quot; to read a barcode</string>
+    <string name="read_barcode">Read Barcode</string>
+    <string name="auto_focus">Auto Focus</string>
+    <string name="use_flash">Use Flash</string>
+    <string name="barcode_success">Barcode read successfully</string>
+    <string name="barcode_failure">No barcode captured</string>
+    <string name="barcode_error">"Error reading barcode: %1$s"</string>
+    <string name="generate_button">Generate QR</string>
+    <string name="share_text">"Hey i am using QR Scanner App.Try it now! https://play.google.com/store/apps/details?id=app.barcode.qrcodereader"</string>
+
+    <string-array name="icon_contacts">
+        <item>Add</item>
+        <item>Email</item>
+        <item>Call</item>
+        <item>SMS</item>
+        <item>Find Place</item>
+        <item>Open Url</item>
+        <item>Copy</item>
+        <item>Share</item>
+    </string-array>
+    <string-array name="icon_email">
+        <item>Email</item>
+        <item>Copy</item>
+        <item>Share</item>
+    </string-array>
+    <string-array name="icon_sms">
+        <item>SMS</item>
+        <item>Call</item>
+        <item>Copy</item>
+        <item>Share</item>
+    </string-array>
+    <string-array name="icon_url">
+        <item>Open Url</item>
+        <item>Copy</item>
+        <item>Share</item>
+    </string-array>
+    <string-array name="icon_others">
+        <item>Search on Google</item>
+        <item>Copy</item>
+        <item>Share</item>
+    </string-array>
+    <string-array name="qr_type">
+        <item>Contact Information</item>
+        <item>URL</item>
+        <item>E-mail</item>
+        <item>Telephone</item>
+        <item>SMS</item>
+        <item>Geo</item>
+        <item>Calendar Events</item>
+        <item>Wi-Fi</item>
+        <item>Text</item>
+    </string-array>
+    <string-array name="image_size">
+        <item>Select Image size</item>
+        <item>(250x250)</item>
+        <item>(300x300)</item>
+        <item>(350x350)</item>
+        <item>(400x400)</item>
+        <item>(450x450)</item>
+        <item>(500x500)</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
