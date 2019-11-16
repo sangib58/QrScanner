@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -46,10 +47,10 @@ public class QrGenerateFragment extends Fragment {
             R.drawable.ic_sms, R.drawable.ic_place, R.drawable.ic_wifi, R.drawable.ic_text};
 
 
-    public final static int WHITE = 0xFFFFFFFF;
-    public final static int BLACK = 0xFF000000;
-    public final static int WIDTH = 500;
-    public final static int HEIGHT = 500;
+    private final static int WHITE = 0xFFFFFFFF;
+    private final static int BLACK = 0xFF000000;
+    //private final static int WIDTH = 500;
+    //private final static int HEIGHT = 500;
     private int width,height;
     //public final static String STR = "MECARD:N:Owen,Sean;ADR:76 9th Avenue, 4th Floor, New York, NY 10011;TEL:12125551212;EMAIL:srowen@example.com;";
 
@@ -65,12 +66,14 @@ public class QrGenerateFragment extends Fragment {
     ByteArrayOutputStream bytearrayoutputstream;
     File file;
     FileOutputStream fileoutputstream;
-    View view;
+    private View view;
 
+    @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         try{
+            //QR Generate View
             setHasOptionsMenu(true);
             getActivity().setTitle("QR Generator");
 
@@ -319,7 +322,7 @@ public class QrGenerateFragment extends Fragment {
                                     Log.e("Error:",e.getMessage());
                                 }
                             }else{
-                                //Toast.makeText(getContext(),"Empty Input",Toast.LENGTH_SHORT).show();
+                                Log.e("Msg","Empty String");
                             }
                         }
 
@@ -393,7 +396,7 @@ public class QrGenerateFragment extends Fragment {
     }
 
 
-    Bitmap encodeAsBitmap(String str,int width,int height) throws WriterException {
+    private Bitmap encodeAsBitmap(String str,int width,int height) throws WriterException {
         BitMatrix result;
         try {
             result = new MultiFormatWriter().encode(str,
