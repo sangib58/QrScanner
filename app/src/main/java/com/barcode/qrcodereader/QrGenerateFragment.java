@@ -356,7 +356,7 @@ public class QrGenerateFragment extends Fragment {
                             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                             intent.setData(Uri.fromFile(outFile));
                             getContext().sendBroadcast(intent);
-                            Toast.makeText(getContext(),"Image saved",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),"Image saved to Gallery",Toast.LENGTH_SHORT).show();
                         }
 
 
