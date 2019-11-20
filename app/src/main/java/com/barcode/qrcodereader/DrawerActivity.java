@@ -61,21 +61,20 @@ public class DrawerActivity extends AppCompatActivity
 
             //ad script start
 
-        /*MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
+           /* MobileAds.initialize(this, new OnInitializationCompleteListener() {
+                @Override
+                public void onInitializationComplete(InitializationStatus initializationStatus) {
 
-            }
-        });
+                }
+            });
 
-        mAdView=findViewById(R.id.adView);
-        AdRequest adRequest=new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);*/
+            mAdView=findViewById(R.id.adView);
+            AdRequest adRequest=new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);*/
 
             //ad script end
 
             //test ad script start
-
             MobileAds.initialize(this, new OnInitializationCompleteListener() {
                 @Override
                 public void onInitializationComplete(InitializationStatus initializationStatus) {
@@ -86,6 +85,7 @@ public class DrawerActivity extends AppCompatActivity
             mAdView=findViewById(R.id.adView);
             AdRequest adRequest=new AdRequest.Builder().addTestDevice("6444B67CB52C4D9C9CC98D93E5BD88FE").build();
             mAdView.loadAd(adRequest);
+            //test ad script end
 
             Fragment fragment=new QrScanFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,fragment).commit();
