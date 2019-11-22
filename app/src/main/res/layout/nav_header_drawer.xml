@@ -19,7 +19,7 @@
         android:contentDescription="@string/nav_header_desc"
         android:paddingTop="20dp"
         android:layout_gravity="center"
-        app:srcCompat="@drawable/qr_transparent_scanner"
+        app:srcCompat="@drawable/logo_qr_trans"
          />
 
 <!--    <TextView

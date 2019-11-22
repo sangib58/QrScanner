@@ -2,25 +2,34 @@ package com.barcode.qrcodereader;
 
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -326,6 +335,12 @@ public class QrGenerateFragment extends Fragment {
                             }
                         }
 
+                        View keyBoardView=getActivity().getCurrentFocus();
+
+                        if(keyBoardView!=null){
+                            InputMethodManager inputMethodManager= (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputMethodManager.hideSoftInputFromWindow(keyBoardView.getWindowToken(),0);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -333,33 +348,16 @@ public class QrGenerateFragment extends Fragment {
             });
 
             saveIconImageView.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
                 @Override
                 public void onClick(View view) {
                     try {
-                        if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-                            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+                        int rc = ActivityCompat.checkSelfPermission((DrawerActivity) getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                        if(rc==1){
+                            saveImageToDisk();
                         }else{
-                            BitmapDrawable draw = (BitmapDrawable) imageView.getDrawable();
-                            Bitmap bitmap = draw.getBitmap();
-
-                            FileOutputStream outStream = null;
-                            File sdCard = Environment.getExternalStorageDirectory();
-                            File dir = new File(sdCard.getAbsolutePath() + "/QrScanner");
-                            dir.mkdirs();
-                            String fileName = String.format("%d.jpg", System.currentTimeMillis());
-                            File outFile = new File(dir, fileName);
-                            outStream = new FileOutputStream(outFile);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-                            outStream.flush();
-                            outStream.close();
-
-                            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                            intent.setData(Uri.fromFile(outFile));
-                            getContext().sendBroadcast(intent);
-                            Toast.makeText(getContext(),"Image saved to Gallery",Toast.LENGTH_SHORT).show();
+                            requestCameraPermission();
                         }
-
-
                     }catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -395,8 +393,82 @@ public class QrGenerateFragment extends Fragment {
         return view;
     }
 
+    private void requestCameraPermission() {
+        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+        return;
+    }
 
-    private Bitmap encodeAsBitmap(String str,int width,int height) throws WriterException {
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode!=2){
+            Log.d("TAG", "Got unexpected permission result: " + requestCode);
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            return;
+        }
+
+        if(grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            saveImageToDisk();
+            try {
+                if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+                    return;
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private void saveImageToDisk(){
+        try{
+            BitmapDrawable draw = (BitmapDrawable) imageView.getDrawable();
+            Bitmap bitmap = draw.getBitmap();
+
+            FileOutputStream outStream = null;
+            File sdCard = Environment.getExternalStorageDirectory();
+            File dir = new File(sdCard.getAbsolutePath() + "/QrScanner");
+            dir.mkdirs();
+            String fileName = String.format("%d.jpg", System.currentTimeMillis());
+            File outFile = new File(dir, fileName);
+            outStream = new FileOutputStream(outFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+            outStream.flush();
+            outStream.close();
+
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            intent.setData(Uri.fromFile(outFile));
+            getContext().sendBroadcast(intent);
+
+            Intent objIntent=new Intent();
+            objIntent.setAction(Intent.ACTION_VIEW);
+            objIntent.setDataAndType(Uri.fromFile(outFile),"image/*");
+            PendingIntent pendingIntent= PendingIntent.getActivity(getContext(),0,objIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationManager notificationManager=(NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+            Notification notify=new Notification.Builder(getActivity())
+                    .setContentTitle("Click to view Generated QR")
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.logo_qr)
+                    .setDefaults(Notification.DEFAULT_SOUND)
+                    .setAutoCancel(true)
+                    //.addAction(null,"QR Generated Successfully",pendingIntent)//to add action button
+                    .setContentIntent(pendingIntent)
+                    .build();
+
+            notify.flags |= Notification.FLAG_AUTO_CANCEL;
+            notificationManager.notify(0, notify);
+            Toast.makeText(getContext(),"Image saved to "+sdCard.getAbsolutePath()+"/QrScanner",Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+
+
+    private Bitmap encodeAsBitmap(String str, int width, int height) throws WriterException {
         BitMatrix result;
         try {
             result = new MultiFormatWriter().encode(str,

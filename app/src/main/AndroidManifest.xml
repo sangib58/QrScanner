@@ -15,7 +15,7 @@
     <application
         android:allowBackup="true"
         android:label="@string/app_name"
-        android:icon="@drawable/qr_scanner"
+        android:icon="@drawable/logo_qr"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
