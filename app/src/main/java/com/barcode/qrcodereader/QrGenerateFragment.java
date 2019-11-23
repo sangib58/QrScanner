@@ -450,7 +450,7 @@ public class QrGenerateFragment extends Fragment {
             Notification notify=new Notification.Builder(getActivity())
                     .setContentTitle("Click to view Generated QR")
                     .setWhen(System.currentTimeMillis())
-                    .setSmallIcon(R.drawable.logo_qr)
+                    .setSmallIcon(R.drawable.logo_qr_push)
                     .setDefaults(Notification.DEFAULT_SOUND)
                     .setAutoCancel(true)
                     //.addAction(null,"QR Generated Successfully",pendingIntent)//to add action button

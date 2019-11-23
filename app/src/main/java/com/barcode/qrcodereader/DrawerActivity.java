@@ -44,6 +44,7 @@ public class DrawerActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try{
+            //setTheme(R.style.splashScreenTheme);
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_drawer);
 

@@ -6,8 +6,8 @@ android {
         applicationId "app.barcode.qrcodereader"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 2
-        versionName "1.1"
+        versionCode 4
+        versionName "1.2"
         testInstrumentationRunner "android.support.qr_logo.runner.AndroidJUnitRunner"
     }
     buildTypes {
