@@ -3,8 +3,11 @@ package com.barcode.qrcodereader;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -13,6 +16,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.fragment.app.Fragment;
+
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -27,6 +33,7 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import helper.CameraSource;
 
@@ -40,19 +47,30 @@ public class ResultFragment extends Fragment{
     private String result,resultHistory;
     private TextView headerDetail,scanHeader,scanResult;
     //private ImageView headerImg;
-    private String[] contactIcons,emailIcons,smsIcons,urlIcons,otherIcons;
+    private String[] contactIcons,emailIcons,smsIcons,urlIcons,otherIcons,wifiIcons;
     private int[] contactImages={R.drawable.ic_person_add,R.drawable.ic_email_black,R.drawable.ic_local_phone,
             R.drawable.ic_sms,R.drawable.ic_place,R.drawable.ic_launch_24dp,R.drawable.ic_content_copy,R.drawable.ic_share};
     private int[] emailImages={R.drawable.ic_email_black,R.drawable.ic_content_copy,R.drawable.ic_share};
     private int[] smsImages={R.drawable.ic_sms,R.drawable.ic_local_phone,R.drawable.ic_content_copy,R.drawable.ic_share};
     private int[] urlImages={R.drawable.ic_launch_24dp,R.drawable.ic_content_copy,R.drawable.ic_share};
     private int[] otherImages={R.drawable.ic_search_black,R.drawable.ic_content_copy,R.drawable.ic_share};
+    private int[] wifiImages={R.drawable.ic_wifi,R.drawable.ic_share};
     private int insertVal;
     View view;
+    private String rr;
+    Bundle bundle;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         try{
+            bundle=this.getArguments();
+            rr="";
+            if(bundle!=null){
+                rr=bundle.getString("insertTag");
+                Log.v("ResultFragment",rr);
+                //Toast.makeText(getContext(),rr,Toast.LENGTH_SHORT).show();
+            }
+
             setHasOptionsMenu(true);
             view=inflater.inflate(R.layout.result_fragment,container,false);
             getActivity().setTitle("Result");
@@ -131,13 +149,13 @@ public class ResultFragment extends Fragment{
                 gridViewAdapter=new GridViewAdapter(getActivity(),urlImages,urlIcons);
             }
             else if(scanHelper.getBarcodeType().equals("WiFi")){
-                result=scanHelper.getText1()+"\n"
+                result=scanHelper.getText3()+"\n"+scanHelper.getText1()+"\n"
                         +scanHelper.getText2();
-                resultHistory=scanHelper.getText1()+"\t \t"
+                resultHistory=scanHelper.getText3()+"\t \t"+scanHelper.getText1()+"\t \t"
                         +scanHelper.getText2();
                 //headerImg.setBackgroundResource(R.drawable.ic_wifi);
-                otherIcons=getResources().getStringArray(R.array.icon_others);
-                gridViewAdapter=new GridViewAdapter(getActivity(),otherImages,otherIcons);
+                wifiIcons=getResources().getStringArray(R.array.icon_wifi);
+                gridViewAdapter=new GridViewAdapter(getActivity(),wifiImages,wifiIcons);
             }
             else if(scanHelper.getBarcodeType().equals("Geo")){
                 result=scanHelper.getText1()+"\n"
@@ -169,7 +187,6 @@ public class ResultFragment extends Fragment{
                 otherIcons=getResources().getStringArray(R.array.icon_others);
                 gridViewAdapter=new GridViewAdapter(getActivity(),otherImages,otherIcons);
             }
-
             else if(scanHelper.getBarcodeType().equals("Calendar Event")){
                 scanHelper.setBarcodeType("Calendar Event");
                 result=scanHelper.getText1();
@@ -192,13 +209,13 @@ public class ResultFragment extends Fragment{
                 gridViewAdapter=new GridViewAdapter(getActivity(),otherImages,otherIcons);
             }
 
-            if(insertVal==0){
+            if(insertVal==0 && rr=="qr"){
                 //int duplicateCheck=sqLiteHelper.getDuplicateCount(currentDateTime,resultHistory);
                 //if(duplicateCheck==0){
                 sqLiteHelper.insertData(scanHelper.getBarcodeType(),scanHelper.getOrgName(),scanHelper.getTitle(),scanHelper.getAddress(),
                         scanHelper.getEmail(),scanHelper.getName(),scanHelper.getPhone(),scanHelper.getUrl(),scanHelper.getText1(),scanHelper.getText2(),scanHelper.getText3(),currentDateTime,resultHistory);
                 //}
-
+                bundle=null;
             }
 
 
@@ -321,13 +338,137 @@ public class ResultFragment extends Fragment{
                         }
 
 
+                    }else if(itemText.equals("Connect to Network")){
+                        /*Log.v("nn1",scanHelper.getText1());
+                        Log.v("nn2",scanHelper.getText2());
+                        Log.v("nn3",scanHelper.getText3());*/
+
+                        try{
+                            //WifiConfiguration configuration=new WifiConfiguration();
+                            //configuration.SSID="\""+scanHelper.getText1()+"\"";
+
+                            if(scanHelper.getText3().equals("WEP")){
+                                ConnectToNetworkWEP(scanHelper.getText1(),scanHelper.getText2());
+                                /*configuration.wepKeys[0] = "\"" + scanHelper.getText2() + "\"";
+                                configuration.wepTxKeyIndex = 0;
+                                configuration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+                                configuration.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);*/
+                            }else if(scanHelper.getText3().equals("WPA/WPA2")){
+                                ConnectToNetworkWPA(scanHelper.getText1(),scanHelper.getText2());
+                                //configuration.preSharedKey = "\""+ scanHelper.getText2() +"\"";
+                            }else{
+                                //configuration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+                            }
+
+                            /*WifiManager wifiManager = (WifiManager)getContext().getApplicationContext().getSystemService(getContext().getApplicationContext().WIFI_SERVICE);
+                            wifiManager.addNetwork(configuration);
+
+                            if(configuration.SSID!=null && configuration.SSID.equals("\""+scanHelper.getText1()+"\"")){
+                                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                wifiManager.disconnect();
+                                wifiManager.enableNetwork(configuration.networkId,true);
+                                wifiManager.reconnect();
+                            }*/
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
+
                 }
             });
         }catch (Exception e){
             e.printStackTrace();
         }
         return view;
+    }
+
+    private boolean ConnectToNetworkWEP( String networkSSID, String password )
+    {
+        try {
+            WifiConfiguration conf = new WifiConfiguration();
+            conf.SSID = "\"" + networkSSID + "\"";   // Please note the quotes. String should contain SSID in quotes
+            conf.wepKeys[0] = "\"" + password + "\""; //Try it with quotes first
+
+            conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+            conf.allowedGroupCiphers.set(WifiConfiguration.AuthAlgorithm.OPEN);
+            conf.allowedGroupCiphers.set(WifiConfiguration.AuthAlgorithm.SHARED);
+
+
+            WifiManager wifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(getContext().WIFI_SERVICE);
+            int networkId = wifiManager.addNetwork(conf);
+
+            if (networkId == -1){
+                //Try it again with no quotes in case of hex password
+                conf.wepKeys[0] = password;
+                networkId = wifiManager.addNetwork(conf);
+            }
+
+            List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+            for( WifiConfiguration i : list ) {
+                if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
+                    wifiManager.disconnect();
+                    wifiManager.enableNetwork(i.networkId, true);
+                    wifiManager.reconnect();
+                    break;
+                }
+            }
+
+            //WiFi Connection success, return true
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    private boolean ConnectToNetworkWPA( String networkSSID, String password )
+    {
+        try {
+            WifiConfiguration conf = new WifiConfiguration();
+            conf.SSID = "\"" + networkSSID + "\"";   // Please note the quotes. String should contain SSID in quotes
+
+            conf.preSharedKey = "\"" + password + "\"";
+
+            conf.status = WifiConfiguration.Status.ENABLED;
+            conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+            conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+            conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+
+            Log.d("connecting", conf.SSID + " " + conf.preSharedKey);
+
+            WifiManager wifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            wifiManager.setWifiEnabled(true);
+            wifiManager.addNetwork(conf);
+            boolean chk= wifiManager.isWifiEnabled();
+
+            Log.d("after connecting", conf.SSID + " " + conf.preSharedKey);
+
+
+            if(conf.SSID != null && conf.SSID.equals("\"" + networkSSID + "\"")) {
+                wifiManager.disconnect();
+                wifiManager.enableNetwork(conf.networkId, true);
+                wifiManager.reconnect();
+                Log.d("re connecting", conf.SSID + " " + conf.preSharedKey);
+            }
+
+            /*List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
+            for( WifiConfiguration i : list ) {
+                if(i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
+                    wifiManager.disconnect();
+                    wifiManager.enableNetwork(i.networkId, true);
+                    wifiManager.reconnect();
+                    Log.d("re connecting", i.SSID + " " + conf.preSharedKey);
+                    break;
+                }
+            }*/
+
+
+            //WiFi Connection success, return true
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
 
@@ -338,10 +479,11 @@ public class ResultFragment extends Fragment{
                 menu.findItem(R.id.delete).setVisible(false);
                 menu.findItem(R.id.action_settings).setVisible(false);
             }
+            super.onPrepareOptionsMenu(menu);
         }catch (Exception e){
             e.printStackTrace();
         }
-        super.onPrepareOptionsMenu(menu);
+
     }
 
 }

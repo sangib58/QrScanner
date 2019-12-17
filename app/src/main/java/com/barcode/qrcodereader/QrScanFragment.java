@@ -22,6 +22,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -116,21 +117,6 @@ public class QrScanFragment extends Fragment {
         return;
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        try {
-            MenuItem item = menu.findItem(R.id.delete);
-            if (item != null) {
-                item.setVisible(false);
-            }
-            super.onPrepareOptionsMenu(menu);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
     @SuppressLint("InlinedApi")
     private void createCameraSource(final boolean autoFocus, boolean useFlash) {
         try {
@@ -188,7 +174,12 @@ public class QrScanFragment extends Fragment {
                     if(barcodeSparseArray.size()>0){
                         barcodeDetector.release();
                         DrawerActivity.ScanHelper scanHelper =new DrawerActivity.ScanHelper();
+
+                        Bundle bundle=new Bundle();
+                        bundle.putString("insertTag","qr");
+
                         Fragment fragment=new ResultFragment();
+                        fragment.setArguments(bundle);
                         Vibrator vibrator= (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
                         if (Build.VERSION.SDK_INT >= 26) {
                             vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
@@ -291,13 +282,25 @@ public class QrScanFragment extends Fragment {
                                 getFragmentManager().beginTransaction().replace(R.id.fragmentContainer,fragment).commit();
                                 break;
                             case Barcode.WIFI:
-                                String wifiSSID="",wifiPass="";
+                                String wifiSSID="",wifiPass="",enText="";int enType=0;
+                                enType=barcode.wifi.encryptionType;
                                 wifiSSID=barcode.wifi.ssid;
                                 wifiPass=barcode.wifi.password;
+                                if(enType==1){
+                                    enText="No Encryption";
+                                }else if(enType==2){
+                                    enText="WPA/WPA2";
+                                }else if(enType==3){
+                                    enText="WEP";
+                                }else{
+                                    enText="No Encryption";
+                                }
                                 barcodeType="WiFi";
+
                                 scanHelper.setBarcodeType(barcodeType);
                                 scanHelper.setText1(wifiSSID);
                                 scanHelper.setText2(wifiPass);
+                                scanHelper.setText3(enText);
                                 getFragmentManager().beginTransaction().replace(R.id.fragmentContainer,fragment).commit();
                                 break;
                             case Barcode.GEO:
@@ -342,6 +345,54 @@ public class QrScanFragment extends Fragment {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    /*@Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        //super.onCreateOptionsMenu(menu, inflater);
+        try{
+            getActivity().getMenuInflater().inflate(R.menu.drawer,menu);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }*/
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        try {
+            MenuItem item = menu.findItem(R.id.delete);
+            if (item != null) {
+                item.setVisible(false);
+                menu.findItem(R.id.action_settings).setVisible(true);
+            }
+            super.onPrepareOptionsMenu(menu);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id==R.id.action_settings){
+            if(getActivity().getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)){
+                try{
+                    Camera.Parameters parameters = CameraSource.mCamera.getParameters();
+                    if(parameters.getFlashMode().equals("off")){
+                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                    }else{
+                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    }
+                    CameraSource.mCamera.setParameters(parameters);
+                }catch (Exception e){
+                    Log.d("Exp",e.getMessage());
+                }
+            }
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 
@@ -23,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.barcode.Barcode;
 
@@ -41,10 +43,13 @@ import helper.CameraSource;
 public class DrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private AdView mAdView;
+    private boolean doubleBackToExitPressedOnce = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try{
             //setTheme(R.style.splashScreenTheme);
+
+
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_drawer);
 
@@ -96,13 +101,32 @@ public class DrawerActivity extends AppCompatActivity
 
     }
 
-    @Override
+  /*  @Override
     public void onBackPressed() {
         try{
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,new QrScanFragment()).commit();
+
+            if(doubleBackToExitPressedOnce || getSupportFragmentManager().getBackStackEntryCount()!=0){
+                super.onBackPressed();
+                return;
+            }
+            this.doubleBackToExitPressedOnce=true;
+            //Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce=false;
+                }
+            },2000);
+
         }catch (Exception e){
             e.printStackTrace();
         }
+    }*/
+
+    @Override
+    public void onBackPressed() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,new QrScanFragment()).commit();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -138,7 +162,7 @@ public class DrawerActivity extends AppCompatActivity
                 Intent share = new Intent(android.content.Intent.ACTION_SEND);
                 share.setType("text/plain");
                 share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                share.putExtra(Intent.EXTRA_TEXT, "Hey i am using this QR Scanner App.Try it! https://play.google.com/store/apps/details?id=app.barcode.qrcodereader");
+                share.putExtra(Intent.EXTRA_TEXT, "Hey i am using this QR Scanner & Generator App.Try it! https://play.google.com/store/apps/details?id=app.barcode.qrcodereader");
                 startActivity(Intent.createChooser(share, "Share with"));
             }
             else if (id == R.id.nav_close) {
@@ -171,13 +195,19 @@ public class DrawerActivity extends AppCompatActivity
         private static String Name;
         private static String Phone;
         private static String Url;
+        //private static int EncryptionType;
         private static String Text1;
         private static String Text2;
         private static String Text3;
         private static String ScanDateTime;
         //private static String Result;
 
-
+       /* public static void setEncryptionType(int encryptionType){
+            EncryptionType=encryptionType;
+        }
+        public static int getEncryptionType(){
+            return EncryptionType;
+        }*/
         public static String getScanDateTime(){
             return ScanDateTime;
         }
@@ -285,7 +315,6 @@ public class DrawerActivity extends AppCompatActivity
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         try{
@@ -295,28 +324,6 @@ public class DrawerActivity extends AppCompatActivity
             e.printStackTrace();
         }
         return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if(id==R.id.action_settings){
-            if(getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)){
-                try{
-                    Camera.Parameters parameters = CameraSource.mCamera.getParameters();
-                    if(parameters.getFlashMode().equals("off")){
-                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                    }else{
-                        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                    }
-                    CameraSource.mCamera.setParameters(parameters);
-                }catch (Exception e){
-                    Log.d("Exp",e.getMessage());
-                }
-            }
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

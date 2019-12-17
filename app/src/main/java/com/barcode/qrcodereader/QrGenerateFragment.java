@@ -36,6 +36,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -66,7 +68,7 @@ public class QrGenerateFragment extends Fragment {
     private LinearLayout contactLayout,emailLayout,smsLayout,geoLayout,wifiLayout;
     private EditText text,url,phone,contactName,contactTitle,contactOrganization,contactPhone,
                         contactEmail,contactWeb,contactAddress,EmailMailTo,EmailCC,EmailSubject,EmailBody,
-                        smsNumber,smsText,geoLatitude,geoLongitude,wifiType,wifiSSID,wifiPassword;
+                        smsNumber,smsText,geoLatitude,geoLongitude,wifiSSID,wifiPassword;
     private Button btnQrGenerate;
     private ImageView imageView,saveIconImageView,shareIconImageView;
     private int qrTypePosition,imageSizePosition;
@@ -76,6 +78,8 @@ public class QrGenerateFragment extends Fragment {
     File file;
     FileOutputStream fileoutputstream;
     private View view;
+    private RadioGroup wifiRadioGroup;
+    private String encryptionType;
 
     @NonNull
     @Override
@@ -127,9 +131,10 @@ public class QrGenerateFragment extends Fragment {
             geoLatitude=view.findViewById(R.id.latitudeId);
             geoLongitude=view.findViewById(R.id.longitudeId);
 
-            wifiType=view.findViewById(R.id.wifiTypeId);
             wifiSSID=view.findViewById(R.id.ssidId);
             wifiPassword=view.findViewById(R.id.passwordId);
+            wifiRadioGroup=view.findViewById(R.id.wifiTypeRadioGroupId);
+
 
             contactLayout.setVisibility(View.GONE);
             emailLayout.setVisibility(View.GONE);
@@ -139,6 +144,30 @@ public class QrGenerateFragment extends Fragment {
             text.setVisibility(View.GONE);
             url.setVisibility(View.GONE);
             phone.setVisibility(View.GONE);
+
+            encryptionType="";
+            wifiRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                    /*RadioButton checkedBtn=view.findViewById(checkedId);
+                    String checkedBtnText=checkedBtn.getText().toString();
+                    Log.v("RadioName",checkedBtnText);*/
+                    switch (checkedId){
+                        case R.id.noneBtnId:
+                            Log.v("RadioId1","noneBtnId");
+                            encryptionType="nopass";
+                            break;
+                        case R.id.wpaId:
+                            Log.v("RadioId2","wpaId");
+                            encryptionType="WPA";
+                            break;
+                        case R.id.wepId:
+                            Log.v("RadioId3","wepId");
+                            encryptionType="WEP";
+                            break;
+                    }
+                }
+            });
 
 
             imgSizSpinner=view.findViewById(R.id.spinner_img_size);
@@ -167,12 +196,16 @@ public class QrGenerateFragment extends Fragment {
                     }else if(imageSizePosition==6){
                         width=600;
                         height=600;
+                    }else{
+                        width=300;
+                        height=300;
+                        //Log.v("tt1","onItemSelected");
                     }
                 }
 
                 @Override
                 public void onNothingSelected(AdapterView<?> adapterView) {
-
+                    //Log.v("tt2","onNothingSelected");
                 }
             });
 
@@ -236,15 +269,16 @@ public class QrGenerateFragment extends Fragment {
 
             btnQrGenerate.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(final View view) {
                     try {
                         qrString="";
                         if(qrTypePosition==0){
                             Toast.makeText(getContext(),"Please Select QR Type",Toast.LENGTH_SHORT).show();
                         }
-                        else if(imageSizePosition==0){
+                        /*else if(imageSizePosition==0){
                             Toast.makeText(getContext(),"Please Select Image size",Toast.LENGTH_SHORT).show();
-                        }else if(qrTypePosition==1){
+                        }*/
+                        else if(qrTypePosition==1){
                             String name,title,organization,phnNo,email,web,address;
                             name=contactName.getText().toString();
                             title=contactTitle.getText().toString();
@@ -254,9 +288,18 @@ public class QrGenerateFragment extends Fragment {
                             web=contactWeb.getText().toString();
                             address=contactAddress.getText().toString();
 
-                            qrString="BIZCARD:N:"+name+";T:"+title+";C:"+organization+";B:"+phnNo+";E:"+email+";U:"+web+";A:"+address+";";
+                            if(name.isEmpty()){
+                                Toast.makeText(getContext(),"Name cannot be empty",Toast.LENGTH_SHORT).show();
+                            }else{
+                                qrString="BIZCARD:N:"+name+";T:"+title+";C:"+organization+";B:"+phnNo+";E:"+email+";U:"+web+";A:"+address+";";
+                            }
                         }else if(qrTypePosition==2){
-                            qrString="URL:"+url.getText().toString();
+                            String urlText=url.getText().toString();
+                            if(urlText.isEmpty()){
+                                Toast.makeText(getContext(),"URL cannot be empty",Toast.LENGTH_SHORT).show();
+                            }else{
+                                qrString="URL:"+urlText;
+                            }
                         }else if(qrTypePosition==3){
                             String mailTo,cc,subject,body;
                             mailTo=EmailMailTo.getText().toString();
@@ -277,7 +320,12 @@ public class QrGenerateFragment extends Fragment {
                                 }
                             }
                         }else if(qrTypePosition==4){
-                            qrString="tel:"+phone.getText().toString();
+                            String phnNumber=phone.getText().toString();
+                            if(phnNumber.isEmpty()){
+                                Toast.makeText(getContext(),"Telephone cannot be empty",Toast.LENGTH_SHORT).show();
+                            }else{
+                                qrString="tel:"+phnNumber;
+                            }
                         }else if(qrTypePosition==5){
                             String number,text;
                             number=smsNumber.getText().toString();
@@ -290,31 +338,37 @@ public class QrGenerateFragment extends Fragment {
                             }else{
                                 qrString+="smsto:"+number+":"+text;
                             }
-
                         }else if(qrTypePosition==6){
                             String lat,longi;
                             lat=geoLatitude.getText().toString();
                             longi=geoLongitude.getText().toString();
-
-                            lat=lat.isEmpty()?"":lat;
-                            longi=longi.isEmpty()?"":longi;
-
-                            qrString+="geo:"+lat+","+longi;
+                            //lat=lat.isEmpty()?"":lat;
+                            //longi=longi.isEmpty()?"":longi;
+                            if(lat.isEmpty() || longi.isEmpty()){
+                                Toast.makeText(getContext(),"Latitude and Longitude cannot be empty",Toast.LENGTH_SHORT).show();
+                            }else {
+                                qrString+="geo:"+lat+","+longi;
+                            }
                             //qrString="geo:40.71872,-73.98905,100";
                         }else if(qrTypePosition==7){
-                            String type,ssid,pass;
-                            type=wifiType.getText().toString();
+                            String ssid,pass;
                             ssid=wifiSSID.getText().toString();
                             pass=wifiPassword.getText().toString();
 
-                            type=type.isEmpty()?"":type;
-                            ssid=ssid.isEmpty()?"":ssid;
+                            //ssid=ssid.isEmpty()?"":ssid;
                             pass=pass.isEmpty()?"":pass;
-
-                            qrString+="WIFI:"+"T:"+type+";S:"+ssid+";P:"+pass+";";
-
+                            if(ssid.isEmpty()){
+                                Toast.makeText(getContext(),"SSID cannot be empty",Toast.LENGTH_SHORT).show();
+                            }else{
+                                qrString+="WIFI:"+"T:"+encryptionType+";S:"+ssid+";P:"+pass+";";
+                            }
                         }else if(qrTypePosition==8){
-                            qrString=text.getText().toString();
+                            String textMsg=text.getText().toString();
+                            if(textMsg.isEmpty()){
+                                Toast.makeText(getContext(),"Text cannot be empty",Toast.LENGTH_SHORT).show();
+                            }else{
+                                qrString=textMsg;
+                            }
                         }
 
                         if(qrTypePosition>=1&&qrTypePosition<=8){
@@ -402,7 +456,7 @@ public class QrGenerateFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode!=2){
-            Log.d("TAG", "Got unexpected permission result: " + requestCode);
+            Log.v("TAG", "Got unexpected permission result: " + requestCode);
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             return;
         }
@@ -515,17 +569,20 @@ public class QrGenerateFragment extends Fragment {
         smsText.setText("");
         geoLatitude.setText("");
         geoLongitude.setText("");
-        wifiType.setText("");
         wifiSSID.setText("");
         wifiPassword.setText("");
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        if(menu.hasVisibleItems()){
-            menu.findItem(R.id.delete).setVisible(false);
-            menu.findItem(R.id.action_settings).setVisible(false);
+        try{
+            if(menu.hasVisibleItems()){
+                menu.findItem(R.id.delete).setVisible(false);
+                menu.findItem(R.id.action_settings).setVisible(false);
+            }
+            super.onPrepareOptionsMenu(menu);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        super.onPrepareOptionsMenu(menu);
     }
 }

@@ -115,6 +115,7 @@ public class HistoryFragment extends Fragment{
             MenuItem item=menu.findItem(R.id.action_settings);
             if(item!=null){
                 item.setVisible(false);
+                menu.findItem(R.id.delete).setVisible(true);
             }
             super.onPrepareOptionsMenu(menu);
         }catch (Exception e){

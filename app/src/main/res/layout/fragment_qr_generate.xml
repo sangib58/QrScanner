@@ -185,13 +185,6 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/wifiTypeId"
-            android:hint="Wifi Type"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/ssidId"
             android:hint="SSID"
@@ -202,6 +195,32 @@
             android:hint="Password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/wifiTypeRadioGroupId"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/noneBtnId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="None"
+                android:checked="false"
+                />
+            <RadioButton
+                android:id="@+id/wpaId"
+                android:text="WPA/WPA2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"/>
+            <RadioButton
+                android:id="@+id/wepId"
+                android:text="WEP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"/>
+        </RadioGroup>
 
     </LinearLayout>
 
