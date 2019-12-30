@@ -1,43 +1,22 @@
 package com.barcode.qrcodereader;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
-
 import androidx.fragment.app.Fragment;
-
-//import com.google.android.gms.vision.CameraSource;
 import com.google.android.material.navigation.NavigationView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.google.android.gms.vision.barcode.Barcode;
-
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-
-import java.security.Policy;
-import java.util.List;
-
-import helper.CameraSource;
 
 
 public class DrawerActivity extends AppCompatActivity
@@ -100,29 +79,6 @@ public class DrawerActivity extends AppCompatActivity
         }
 
     }
-
-  /*  @Override
-    public void onBackPressed() {
-        try{
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,new QrScanFragment()).commit();
-
-            if(doubleBackToExitPressedOnce || getSupportFragmentManager().getBackStackEntryCount()!=0){
-                super.onBackPressed();
-                return;
-            }
-            this.doubleBackToExitPressedOnce=true;
-            //Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce=false;
-                }
-            },2000);
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }*/
 
     @Override
     public void onBackPressed() {
@@ -195,19 +151,11 @@ public class DrawerActivity extends AppCompatActivity
         private static String Name;
         private static String Phone;
         private static String Url;
-        //private static int EncryptionType;
         private static String Text1;
         private static String Text2;
         private static String Text3;
         private static String ScanDateTime;
-        //private static String Result;
 
-       /* public static void setEncryptionType(int encryptionType){
-            EncryptionType=encryptionType;
-        }
-        public static int getEncryptionType(){
-            return EncryptionType;
-        }*/
         public static String getScanDateTime(){
             return ScanDateTime;
         }

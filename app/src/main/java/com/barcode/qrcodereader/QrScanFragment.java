@@ -121,7 +121,7 @@ public class QrScanFragment extends Fragment {
     private void createCameraSource(final boolean autoFocus, boolean useFlash) {
         try {
             final Context context = getActivity().getApplicationContext();
-            barcodeDetector = new BarcodeDetector.Builder(context).build();
+            barcodeDetector = new BarcodeDetector.Builder(context).setBarcodeFormats(Barcode.ALL_FORMATS).build();
             CameraSource.Builder builder = new CameraSource.Builder(getActivity().getApplicationContext(), barcodeDetector)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
                     .setRequestedPreviewSize(1600, 1024)
@@ -175,11 +175,11 @@ public class QrScanFragment extends Fragment {
                         barcodeDetector.release();
                         DrawerActivity.ScanHelper scanHelper =new DrawerActivity.ScanHelper();
 
-                        Bundle bundle=new Bundle();
-                        bundle.putString("insertTag","qr");
+                        //Bundle bundle=new Bundle();
+                        //bundle.putString("insertTag","qr");
 
                         Fragment fragment=new ResultFragment();
-                        fragment.setArguments(bundle);
+                        //fragment.setArguments(bundle);
                         Vibrator vibrator= (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
                         if (Build.VERSION.SDK_INT >= 26) {
                             vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
@@ -346,16 +346,6 @@ public class QrScanFragment extends Fragment {
             e.printStackTrace();
         }
     }
-
-    /*@Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //super.onCreateOptionsMenu(menu, inflater);
-        try{
-            getActivity().getMenuInflater().inflate(R.menu.drawer,menu);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }*/
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
