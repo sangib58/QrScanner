@@ -10,6 +10,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.google.android.gms.ads.AdRequest;
@@ -18,17 +21,15 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
+import java.util.List;
+
 
 public class DrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private AdView mAdView;
-    private boolean doubleBackToExitPressedOnce = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try{
-            //setTheme(R.style.splashScreenTheme);
-
-
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_drawer);
 
@@ -46,20 +47,6 @@ public class DrawerActivity extends AppCompatActivity
 
             //ad script start
 
-           /* MobileAds.initialize(this, new OnInitializationCompleteListener() {
-                @Override
-                public void onInitializationComplete(InitializationStatus initializationStatus) {
-
-                }
-            });
-
-            mAdView=findViewById(R.id.adView);
-            AdRequest adRequest=new AdRequest.Builder().build();
-            mAdView.loadAd(adRequest);*/
-
-            //ad script end
-
-            //test ad script start
             MobileAds.initialize(this, new OnInitializationCompleteListener() {
                 @Override
                 public void onInitializationComplete(InitializationStatus initializationStatus) {
@@ -68,8 +55,22 @@ public class DrawerActivity extends AppCompatActivity
             });
 
             mAdView=findViewById(R.id.adView);
-            AdRequest adRequest=new AdRequest.Builder().addTestDevice("6444B67CB52C4D9C9CC98D93E5BD88FE").build();
+            AdRequest adRequest=new AdRequest.Builder().build();
             mAdView.loadAd(adRequest);
+
+            //ad script end
+
+            //test ad script start
+            /*MobileAds.initialize(this, new OnInitializationCompleteListener() {
+                @Override
+                public void onInitializationComplete(InitializationStatus initializationStatus) {
+
+                }
+            });
+
+            mAdView=findViewById(R.id.adView);
+            AdRequest adRequest=new AdRequest.Builder().addTestDevice("6444B67CB52C4D9C9CC98D93E5BD88FE").build();
+            mAdView.loadAd(adRequest);*/
             //test ad script end
 
             Fragment fragment=new QrScanFragment();
@@ -82,7 +83,15 @@ public class DrawerActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,new QrScanFragment()).commit();
+        List fragmentList = getSupportFragmentManager().getFragments();
+        String className=fragmentList.get(fragmentList.size()-1).getClass().getName();
+
+        if(className.equals("com.barcode.qrcodereader.QrScanFragment")){
+            //super.onBackPressed();
+            finish();
+        }else{
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,new QrScanFragment()).commit();
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -139,128 +148,6 @@ public class DrawerActivity extends AppCompatActivity
         }
 
         return true;
-    }
-
-    public static class ScanHelper {
-        private static int Id;
-        private static String BarcodeType;
-        private static String OrgName;
-        private static String Title;
-        private static String Address;
-        private static String Email;
-        private static String Name;
-        private static String Phone;
-        private static String Url;
-        private static String Text1;
-        private static String Text2;
-        private static String Text3;
-        private static String ScanDateTime;
-
-        public static String getScanDateTime(){
-            return ScanDateTime;
-        }
-
-        public static void setScanDateTime(String scanDateTime){
-            ScanDateTime=scanDateTime;
-        }
-
-        public static int getId() {
-            return Id;
-        }
-
-        public static void setId(int id) {
-            Id = id;
-        }
-
-        public static String getBarcodeType() {
-            return BarcodeType;
-        }
-
-        public static void setBarcodeType(String barcodeType) {
-            BarcodeType = barcodeType;
-        }
-
-        public static String getOrgName() {
-            return OrgName;
-        }
-
-        public static void setOrgName(String orgName) {
-            OrgName = orgName;
-        }
-
-        public static String getTitle() {
-            return Title;
-        }
-
-        public static void setTitle(String title) {
-            Title = title;
-        }
-
-        public static String getAddress() {
-            return Address;
-        }
-
-        public static void setAddress(String address) {
-            Address = address;
-        }
-
-        public static String getEmail() {
-            return Email;
-        }
-
-        public static void setEmail(String email) {
-            Email = email;
-        }
-
-        public static String getName() {
-            return Name;
-        }
-
-        public static void setName(String name) {
-            Name = name;
-        }
-
-        public static String getPhone() {
-            return Phone;
-        }
-
-        public static void setPhone(String phone) {
-            Phone = phone;
-        }
-
-        public static String getUrl() {
-            return Url;
-        }
-
-        public static void setUrl(String url) {
-            Url = url;
-        }
-
-        public static String getText1() {
-            return Text1;
-        }
-
-        public static void setText1(String text1) {
-            Text1 = text1;
-        }
-
-        public static String getText2() {
-            return Text2;
-        }
-
-        public static void setText2(String text2) {
-            Text2 = text2;
-        }
-
-        public static String getText3() {
-            return Text3;
-        }
-
-        public static void setText3(String text3) {
-            Text3 = text3;
-        }
-
-
     }
 
     @Override

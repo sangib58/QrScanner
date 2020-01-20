@@ -37,7 +37,8 @@ import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class ResultFragment extends Fragment{
     private SQLiteHelper sqLiteHelper;
-    DrawerActivity.ScanHelper scanHelper;
+    //DrawerActivity.ScanHelper scanHelper;
+    ScanHelper scanHelper;
     private GridView iconGridView;
     private GridViewAdapter gridViewAdapter;
     private String result,resultHistory;
@@ -65,6 +66,9 @@ public class ResultFragment extends Fragment{
                 rr=bundle.getString("insertTag");
                 Log.v("ResultFragment",rr);
             }*/
+
+            Bundle bundle=new Bundle();
+            bundle.putString("TAG","ResultFragment");
 
             setHasOptionsMenu(true);
             view=inflater.inflate(R.layout.result_fragment,container,false);
@@ -208,6 +212,8 @@ public class ResultFragment extends Fragment{
                 sqLiteHelper.insertData(scanHelper.getBarcodeType(),scanHelper.getOrgName(),scanHelper.getTitle(),scanHelper.getAddress(),
                         scanHelper.getEmail(),scanHelper.getName(),scanHelper.getPhone(),scanHelper.getUrl(),scanHelper.getText1(),scanHelper.getText2(),scanHelper.getText3(),currentDateTime,resultHistory);
 
+                insertVal=1;
+                //scanHelper=new ScanHelper();
                 //bundle=null;
             }
 
@@ -340,6 +346,7 @@ public class ResultFragment extends Fragment{
         }
         return view;
     }
+
 
 
     @Override

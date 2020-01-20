@@ -423,7 +423,8 @@ public class QrGenerateFragment extends Fragment {
                     try {
                         BitmapDrawable draw = (BitmapDrawable) imageView.getDrawable();
                         Bitmap bitmap=draw.getBitmap();
-                        File file = new File(getActivity().getExternalCacheDir(),"QRImg.png");
+                        //File file = new File(getActivity().getExternalCacheDir(),"QRImg.png");
+                        File file = new File(getActivity().getFilesDir(),"QRImg.png");
                         FileOutputStream fOut = new FileOutputStream(file);
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
                         fOut.flush();

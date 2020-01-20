@@ -67,6 +67,7 @@ public class QrScanFragment extends Fragment {
         return view;
     }
 
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
@@ -173,8 +174,8 @@ public class QrScanFragment extends Fragment {
                     final SparseArray<Barcode> barcodeSparseArray=detections.getDetectedItems();
                     if(barcodeSparseArray.size()>0){
                         barcodeDetector.release();
-                        DrawerActivity.ScanHelper scanHelper =new DrawerActivity.ScanHelper();
-
+                        //DrawerActivity.ScanHelper scanHelper =new DrawerActivity.ScanHelper();
+                        ScanHelper scanHelper =new ScanHelper();
                         //Bundle bundle=new Bundle();
                         //bundle.putString("insertTag","qr");
 
@@ -219,7 +220,7 @@ public class QrScanFragment extends Fragment {
                                 scanHelper.setUrl(urlOne);
                                 scanHelper.setBarcodeType(barcodeType);
 
-                                getFragmentManager().beginTransaction().replace(R.id.fragmentContainer,fragment).addToBackStack("test").commit();
+                                getFragmentManager().beginTransaction().replace(R.id.fragmentContainer,fragment).commit();
                                 break;
 
                             case Barcode.EMAIL:

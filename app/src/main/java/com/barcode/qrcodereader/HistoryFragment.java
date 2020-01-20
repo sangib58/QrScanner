@@ -64,7 +64,8 @@ public class HistoryFragment extends Fragment{
                     ScanData scanData=mDatabase.getSingleScanData(scanDataList.get(position).getId());
                     Fragment fragment=new ResultFragment();
 
-                    DrawerActivity.ScanHelper scanHelper =new DrawerActivity.ScanHelper();
+                    //DrawerActivity.ScanHelper scanHelper =new DrawerActivity.ScanHelper();
+                    ScanHelper scanHelper =new ScanHelper();
                     scanHelper.setId(scanData.getId());
                     scanHelper.setBarcodeType(scanData.getBarcodeType());
                     scanHelper.setOrgName(scanData.getOrgName());
@@ -108,6 +109,7 @@ public class HistoryFragment extends Fragment{
         }
        return view;
     }
+
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
